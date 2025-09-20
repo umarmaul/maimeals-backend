@@ -1,0 +1,18 @@
+{
+  "dependencies": [
+    "fastapi>=0.116.2",
+    "langchain-openai>=0.3.33",
+    "langchain-postgres>=0.0.15",
+    "langgraph>=0.6.7",
+    "langserve>=0.3.2",
+    "python-dotenv>=1.1.1",
+    "sse-starlette>=3.0.2",
+    "uvicorn>=0.36.0",
+    "pydantic>=2.7,<2.11",
+    "./maichat-agent"
+  ],
+  "graphs": {
+    "maichat-agent": "./maichat-agent/chain.py:graph"
+  },
+  "env": "/.env"
+}

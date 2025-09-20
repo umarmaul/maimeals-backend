@@ -4,4 +4,24 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "fastapi>=0.116.2",
+    "langchain-openai>=0.3.33",
+    "langchain-postgres>=0.0.15",
+    "langgraph>=0.6.7",
+    "langserve>=0.3.2",
+    "python-dotenv>=1.1.1",
+    "sse-starlette>=3.0.2",
+    "uvicorn>=0.36.0",
+    "pydantic>=2.7,<2.11",
+]
+
+[project.scripts]
+maichat-server = "maichat_agent.server:start"
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
