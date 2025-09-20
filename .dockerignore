@@ -1,0 +1,9 @@
+.venv
+.venv-release
+.env
+__pycache__/
+*.pyc
+*.egg-info/
+.git
+.gitignore
+dist/
