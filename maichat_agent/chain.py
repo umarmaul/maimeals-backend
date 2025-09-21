@@ -1,5 +1,5 @@
 from typing import List, Optional, TypedDict
-from typing_extensions import Required
+from typing_extensions import NotRequired
 
 from langchain_core.output_parsers import JsonOutputToolsParser
 from langchain_core.messages import AIMessage, HumanMessage
@@ -13,7 +13,7 @@ from maichat_agent.utils.menu import menu_recommendation
 
 
 class GenerativeUIState(TypedDict, total=False):
-    input: Required[HumanMessage]
+    input: NotRequired[HumanMessage]
     result: Optional[str]
     """Plain text response if no tool was used."""
     tool_calls: Optional[List[dict]]
@@ -43,16 +43,21 @@ def invoke_model(state: GenerativeUIState, config: RunnableConfig) -> Generative
     ]
     model_with_tools = model.bind_tools(tools)
     chain = initial_prompt | model_with_tools
-    result = chain.invoke({"input": state["input"]}, config)
+    input_msg = state.get("input")
+    if input_msg is None:
+        raise ValueError("Missing 'input' in state.")
+    result = chain.invoke({"input": input_msg}, config)
 
     if not isinstance(result, AIMessage):
         raise ValueError("Invalid result from model. Expected AIMessage.")
 
     if isinstance(result.tool_calls, list) and len(result.tool_calls) > 0:
         parsed_tools = tools_parser.invoke(result, config)
-        return {"input": state["input"], "tool_calls": parsed_tools}
+        # Do not include HumanMessage in returned state
+        return {"tool_calls": parsed_tools}
     else:
-        return {"input": state["input"], "result": str(result.content)}
+        # Do not include HumanMessage in returned state
+        return {"result": str(result.content)}
 
 
 def invoke_tools_or_return(state: GenerativeUIState) -> str:
@@ -78,8 +83,8 @@ def invoke_tools(state: GenerativeUIState) -> GenerativeUIState:
         tool_calls = state["tool_calls"]
         tool = tool_calls[0]
         selected_tool = tools_map[tool["type"]]
+        # Do not include HumanMessage in returned state
         return {
-            "input": state["input"],
             "tool_result": selected_tool.invoke(tool["args"]),
         }
     else:

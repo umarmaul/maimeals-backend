@@ -1,8 +1,6 @@
-from typing import List, Union
-
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from typing import List
 from pydantic import BaseModel
 
 
 class ChatInputType(BaseModel):
-    input: List[Union[HumanMessage, AIMessage, SystemMessage]]
+    input: List[dict]
